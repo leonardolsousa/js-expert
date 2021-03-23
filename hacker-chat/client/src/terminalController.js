@@ -1,4 +1,6 @@
 import ComponentsBuilder from "./components.js"
+import { constants } from "./constants.js"
+
 
 export default class TerminalController {
     #usersCollors = new Map()
@@ -53,9 +55,28 @@ export default class TerminalController {
         }
     }
 
+    #onStatusChanged({ screen, status }) {
+        // [ 'leonardo', 'camila', 'naruto' ]
+        return users => {
+            // vamos pegar o primeiro item da lista
+            const { content } = status.items.shift()
+            status.clearItems()
+            status.addItem(content)
+
+            users.forEach(userName => {
+                const collor = this.#getUserCollor(userName)
+                status.addItem(`{${collor}}{bold}${userName}{/}`)
+            })
+
+            screen.render()
+        }
+    }
+
     #registerEvents(eventEmitter, components) {
-        eventEmitter.on('message:received', this.#onMessageReceived(components))
-        eventEmitter.on('activityLog:updated', this.#onLogChanged(components))
+        eventEmitter.on(constants.events.app.MESSAGE_RECEIVED, this.#onMessageReceived(components))
+        eventEmitter.on(constants.events.app.ACTIVITYLOG_UPDATED, this.#onLogChanged(components))
+        eventEmitter.on(constants.events.app.STATUS_UPDATED, this.#onStatusChanged(components))
+
 
 
     }
@@ -75,14 +96,16 @@ export default class TerminalController {
         components.input.focus()
         components.screen.render()
 
-        setInterval(() => {
-            eventEmitter.emit('activityLog:updated', 'leonardo join')
-            eventEmitter.emit('activityLog:updated', 'leonardo left')
-            eventEmitter.emit('activityLog:updated', 'camila join')
-            eventEmitter.emit('activityLog:updated', 'camila left')
-            eventEmitter.emit('activityLog:updated', 'naruto join')
-            eventEmitter.emit('activityLog:updated', 'naruto left')
+        // setInterval(() => {
+        const users = ['leonardo']
+        eventEmitter.emit(constants.events.app.STATUS_UPDATED, users)
+        users.push('camila')
+        eventEmitter.emit(constants.events.app.STATUS_UPDATED, users)
+        users.push('naruto', 'sasuke')
+        eventEmitter.emit(constants.events.app.STATUS_UPDATED, users)
+        users.push('kakashi', 'jiraiya')
+        eventEmitter.emit(constants.events.app.STATUS_UPDATED, users)
 
-        }, 2000);
+        // }, 2000);
     }
 }
