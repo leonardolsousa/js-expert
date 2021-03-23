@@ -38,8 +38,24 @@ export default class TerminalController {
         }
     }
 
+    #onLogChanged({ screen, activityLog }) {
+
+        return msg => {
+            // leonardo left
+            // leonardo join
+
+            const [userName] = msg.split(/\s/)
+            const collor = this.#getUserCollor(userName)
+
+            activityLog.addItem(`{${collor}}{bold}${msg.toString()}{/}`)
+
+            screen.render()
+        }
+    }
+
     #registerEvents(eventEmitter, components) {
         eventEmitter.on('message:received', this.#onMessageReceived(components))
+        eventEmitter.on('activityLog:updated', this.#onLogChanged(components))
 
 
     }
@@ -50,6 +66,8 @@ export default class TerminalController {
             .setLayoutComponent()
             .setInputComponent(this.#onInputReceived(eventEmitter))
             .setChatComponent()
+            .setActivityLogComponent()
+            .setStatusComponent()
             .build()
 
         this.#registerEvents(eventEmitter, components)
@@ -58,9 +76,13 @@ export default class TerminalController {
         components.screen.render()
 
         setInterval(() => {
-            eventEmitter.emit('message:received', { message: 'hey', userName: 'leonardo' })
-            eventEmitter.emit('message:received', { messsage: 'hey', userName: 'camila' })
-            eventEmitter.emit('message:received', { messsage: 'hey', userName: 'naruto' })
+            eventEmitter.emit('activityLog:updated', 'leonardo join')
+            eventEmitter.emit('activityLog:updated', 'leonardo left')
+            eventEmitter.emit('activityLog:updated', 'camila join')
+            eventEmitter.emit('activityLog:updated', 'camila left')
+            eventEmitter.emit('activityLog:updated', 'naruto join')
+            eventEmitter.emit('activityLog:updated', 'naruto left')
+
         }, 2000);
     }
 }
