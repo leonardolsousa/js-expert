@@ -80,7 +80,8 @@ export default class ComponentsBuilder {
     build() {
         const components = {
             screen: this.#screen,
-            input: this.#input
+            input: this.#input,
+            chat: this.#chat
         }
 
         return components

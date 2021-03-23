@@ -11,6 +11,20 @@ export default class TerminalController {
         }
     }
 
+    #onMessageReceived({ screen, chat }) {
+        return msg => {
+            const { userName, message } = msg
+            chat.addItem(`{bold}${userName}{/}: ${message}`)
+            screen.render()
+        }
+    }
+
+    #registerEvents(eventEmitter, components) {
+        eventEmitter.on('message:received', this.#onMessageReceived(components))
+
+
+    }
+
     async initializeTable(eventEmitter) {
         const components = new ComponentsBuilder()
             .setScreen({ title: 'HackerChat - Leonardo Sousa' })
@@ -19,8 +33,15 @@ export default class TerminalController {
             .setChatComponent()
             .build()
 
+        this.#registerEvents(eventEmitter, components)
+
         components.input.focus()
         components.screen.render()
+
+        setInterval(() => {
+            eventEmitter.emit('message:received', { message: 'hey', userName: 'leonardo' })
+            eventEmitter.emit('message:received', { message: 'ho', userName: 'camila' })
+        }, 2000);
 
     }
 }
