@@ -7,7 +7,7 @@ export default class CliConfig {
 
         this.host = hostname
         this.port = port
-        this.protocol = protocol
+        this.protocol = protocol.replace(/\W/, '')
     }
     static parseArguments(commands) {
         const cmd = new Map()
