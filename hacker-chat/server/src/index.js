@@ -5,7 +5,7 @@ import Controller from "./controller.js";
 
 const eventEmitter = new Event()
 
-async function testServer() {
+/**async function testServer() {
     const options = {
         port: 9898,
         host: 'localhost',
@@ -28,7 +28,7 @@ async function testServer() {
             socket.write('Hello!')
         }, 500);
     })
-}
+}*/
 
 const port = process.env.PORT || 9898
 const socketServer = new SocketServer({ port })
@@ -49,4 +49,3 @@ eventEmitter.on(
 })
 
 await testServer()*/
-await testServer()
