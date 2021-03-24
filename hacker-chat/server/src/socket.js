@@ -12,7 +12,7 @@ export default class SocketServer {
         })
 
         return new Promise((resolve, reject) => {
-            server.on('error')
+            server.on('error', reject)
             server.listen(this.port, () => resolve(server))
         })
     }
